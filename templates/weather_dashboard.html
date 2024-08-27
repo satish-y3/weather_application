@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/weather_dashboard.css') }}">
+</head>
+<body>
+    <video autoplay muted loop id="background-video">
+        <source src="{{ url_for('static', filename='css/Gen-2 2663735903, beachJPG, M 5.mp4') }}" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+    <div class="container">
+        <div class="main-weather">
+            <div class="current-weather">
+                <div class="temp">
+                    <span id="current-temp">{{ weather.main.temp }}°C</span>
+                    <div class="high-low">
+                        <span id="high-temp">High: {{ weather.main.temp_max }}°C</span>
+                        <span id="low-temp">Low: {{ weather.main.temp_min }}°C</span>
+                    </div>
+                </div>
+                <div class="details">
+                    <span id="location">{{ weather.name }}, {{ weather.sys.country }}</span>
+                    <span id="current-date">{{ weather.dt | datetimeformat(weather.timezone, '%A, %H:%M') }}</span>
+                    <span id="current-condition">{{ weather.weather[0].description.capitalize() }}</span>
+                </div>
+            </div>
+
+            <!-- Hourly Forecast -->
+            <div class="hourly-forecast">
+                <h3>Hourly Forecast</h3>
+                <div class="hourly-forecast-details">
+                    {% if hourly %}
+                        {% for hour in hourly %}
+                            <div class="hour">
+                                <span class="hour-time">{{ hour.dt | datetimeformat(weather.timezone, '%H:%M') }}</span>
+                                <span class="hour-temp">{{ hour.temp }}°C</span>
+                                <img src="http://openweathermap.org/img/wn/{{ hour.weather[0].icon }}@2x.png" alt="weather icon" class="hour-icon">
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p></p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Weekly Forecast -->
+            <div class="weekly-forecast">
+                <h3>Weekly Forecast</h3>
+                <div class="weekly-forecast-details">
+                    {% if daily %}
+                        {% for day in daily %}
+                            <div class="day-forecast">
+                                <span class="day-name">{{ day.dt | datetimeformat(weather.timezone, '%A') }}</span>
+                                <img src="http://openweathermap.org/img/wn/{{ day.weather[0].icon }}@2x.png" alt="weather icon" class="day-icon">
+                                <span class="day-temp">{{ day.temp.max }}°C / {{ day.temp.min }}°C</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="highlights">
+            <div class="highlight-box stretch">
+                <h3>Wind Status</h3>
+                <span id="wind-status">{{ weather.wind.speed }} km/h</span>
+            </div>
+            <div class="highlight-box">
+                <h3>Sunrise & Sunset</h3>
+                <span id="sunrise">{{ weather.sys.sunrise | datetimeformat(weather.timezone, '%I:%M %p') }}</span>
+                <span id="sunset">{{ weather.sys.sunset | datetimeformat(weather.timezone, '%I:%M %p') }}</span>
+            </div>
+            <div class="highlight-box">
+                <h3>Humidity</h3>
+                <span id="humidity">{{ weather.main.humidity }}%</span>
+            </div>
+            <div class="highlight-box stretch">
+                <h3>Visibility</h3>
+                <span id="visibility">{{ weather.visibility / 1000 }} km</span>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/weather_dashboard.js') }}"></script>
+</body>
+</html>

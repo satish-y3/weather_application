@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <header class="header">
+                <nav class="navbar">
+                    <div class="nav-left">
+                        <span class="nav-snowman" onclick="toggleNav()">☃️</span>
+                        <div class="nav-links">
+                            <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+                            <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+                            <a href="https://github.com/satish-y3" target="_blank" class="nav-link">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=yadavsatish0707@gmail.com" class="nav-link">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+                <h1><span class="highlight">Weather</span> Wizard</h1>
+                <p>Your Ultimate Weather Companion</p>
+            </header>
+            <main class="main-content">
+                <form class="location-form" action="/get_weather" method="POST">
+                    <div class="input-group">
+                        <label for="city">City:</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="state_code">State Code:</label>
+                        <input type="text" id="state_code" name="state_code" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="country_code">Country Code:</label>
+                        <input type="text" id="country_code" name="country_code" required>
+                    </div>
+                    <button type="submit" class="btn">Get Weather</button>
+                </form>
+                <button onclick="getCurrentLocationWeather()" class="btn secondary-btn">Current Location Weather</button>
+            </main>
+            <footer class="footer">
+                <p>&copy; Satish Yadav</p>
+            </footer>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        function getCurrentLocationWeather() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    // Send the coordinates to the server
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/get_weather_by_location';
+
+                    const latitudeInput = document.createElement('input');
+                    latitudeInput.type = 'hidden';
+                    latitudeInput.name = 'latitude';
+                    latitudeInput.value = lat;
+                    form.appendChild(latitudeInput);
+
+                    const longitudeInput = document.createElement('input');
+                    longitudeInput.type = 'hidden';
+                    longitudeInput.name = 'longitude';
+                    longitudeInput.value = lon;
+                    form.appendChild(longitudeInput);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+</body>
+</html>
+
